@@ -10,3 +10,12 @@ export const updateProfileSchema = Joi.object({
   website: Joi.string().uri().allow('', null),
   phone: Joi.string().max(20).allow('', null),
 });
+
+export const followParamsSchema = Joi.object({
+  userId: Joi.string().uuid({ version: 'uuidv4' }).required(),
+});
+
+export const paginationSchema = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  limit: Joi.number().integer().min(1).max(100).default(20),
+});

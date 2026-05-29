@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS, success, errorResponse, ERROR_CODES } from '@tasqalent/shared';
 import type { Config } from '../config/config';
 import * as profileService from '../services/profile.service';
+import { parsePagination } from '@tasqalent/shared';
 
 export function getProfile() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -36,6 +37,64 @@ export function uploadAvatar(cfg: Config) {
       const userId = req.user?.id;
       const profile = await profileService.updateAvatar(cfg, userId, req.body.filePath);
       success(res, profile);
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+export function followUser() {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const followerId = req.user?.id;
+      const followingId = req.params.userId;
+      const result = await profileService.follow(followerId, followingId);
+      success(res, result);
+    } catch (err) {
+      if (err.code === 'CONFLICT') {
+        errorResponse(res, ERROR_CODES.CONFLICT, err.message, HTTP_STATUS.CONFLICT);
+        return;
+      }
+      next(err);
+    }
+  };
+}
+
+export function unfollowUser() {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const followerId = req.user?.id;
+      const followingId = req.params.userId;
+      const result = await profileService.unfollow(followerId, followingId);
+      success(res, result);
+    } catch (err) {
+      if (err.code === 'NOT_FOUND') {
+        errorResponse(res, ERROR_CODES.NOT_FOUND, err.message, HTTP_STATUS.NOT_FOUND);
+        return;
+      }
+      next(err);
+    }
+  };
+}
+
+export function getFollowers() {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { page, limit } = parsePagination(req.query as Record<string, unknown>);
+      const result = await profileService.getFollowersList(req.params.userId, page, limit);
+      success(res, result);
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+export function getFollowing() {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { page, limit } = parsePagination(req.query as Record<string, unknown>);
+      const result = await profileService.getFollowingList(req.params.userId, page, limit);
+      success(res, result);
     } catch (err) {
       next(err);
     }

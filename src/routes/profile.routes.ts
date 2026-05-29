@@ -13,5 +13,11 @@ export function profileRoutes(cfg: Config): Router {
 
   router.post('/profile/avatar', controller.uploadAvatar(cfg));
 
+  router.post('/profile/:userId/follow', controller.followUser());
+  router.delete('/profile/:userId/follow', controller.unfollowUser());
+
+  router.get('/profile/:userId/followers', controller.getFollowers());
+  router.get('/profile/:userId/following', controller.getFollowing());
+
   return router;
 }
