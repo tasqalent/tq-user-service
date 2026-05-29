@@ -4,10 +4,10 @@ import type { Config } from '../config/config';
 import * as profileService from '../services/profile.service';
 import { parsePagination } from '@tasqalent/shared';
 
-export function getProfile() {
+export function getProfile(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const profile = await profileService.getProfile(req.params.userId);
+      const profile = await profileService.getProfileOrCache(cfg, req.params.userId);
       if (!profile) {
         errorResponse(res, ERROR_CODES.NOT_FOUND, 'Profile not found', HTTP_STATUS.NOT_FOUND);
         return;
@@ -19,11 +19,11 @@ export function getProfile() {
   };
 }
 
-export function updateProfile() {
+export function updateProfile(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
-      const profile = await profileService.updateProfile(userId, req.body);
+      const profile = await profileService.updateProfile(cfg, userId, req.body);
       success(res, profile);
     } catch (err) {
       next(err);
@@ -43,12 +43,12 @@ export function uploadAvatar(cfg: Config) {
   };
 }
 
-export function followUser() {
+export function followUser(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const followerId = req.user?.id;
       const followingId = req.params.userId;
-      const result = await profileService.follow(followerId, followingId);
+      const result = await profileService.follow(cfg, followerId, followingId);
       success(res, result);
     } catch (err) {
       if (err.code === 'CONFLICT') {
@@ -60,12 +60,12 @@ export function followUser() {
   };
 }
 
-export function unfollowUser() {
+export function unfollowUser(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const followerId = req.user?.id;
       const followingId = req.params.userId;
-      const result = await profileService.unfollow(followerId, followingId);
+      const result = await profileService.unfollow(cfg, followerId, followingId);
       success(res, result);
     } catch (err) {
       if (err.code === 'NOT_FOUND') {
@@ -77,11 +77,11 @@ export function unfollowUser() {
   };
 }
 
-export function getFollowers() {
+export function getFollowers(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { page, limit } = parsePagination(req.query as Record<string, unknown>);
-      const result = await profileService.getFollowersList(req.params.userId, page, limit);
+      const result = await profileService.getFollowersList(cfg, req.params.userId, page, limit);
       success(res, result);
     } catch (err) {
       next(err);
@@ -89,11 +89,11 @@ export function getFollowers() {
   };
 }
 
-export function getFollowing() {
+export function getFollowing(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { page, limit } = parsePagination(req.query as Record<string, unknown>);
-      const result = await profileService.getFollowingList(req.params.userId, page, limit);
+      const result = await profileService.getFollowingList(cfg, req.params.userId, page, limit);
       success(res, result);
     } catch (err) {
       next(err);

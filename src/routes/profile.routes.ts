@@ -7,17 +7,17 @@ import * as controller from '../controllers/profile.controller';
 export function profileRoutes(cfg: Config): Router {
   const router = Router();
 
-  router.get('/profile/:userId', controller.getProfile());
+  router.get('/profile/:userId', controller.getProfile(cfg));
 
-  router.patch('/profile', validate(updateProfileSchema), controller.updateProfile());
+  router.patch('/profile', validate(updateProfileSchema), controller.updateProfile(cfg));
 
   router.post('/profile/avatar', controller.uploadAvatar(cfg));
 
-  router.post('/profile/:userId/follow', controller.followUser());
-  router.delete('/profile/:userId/follow', controller.unfollowUser());
+  router.post('/profile/:userId/follow', controller.followUser(cfg));
+  router.delete('/profile/:userId/follow', controller.unfollowUser(cfg));
 
-  router.get('/profile/:userId/followers', controller.getFollowers());
-  router.get('/profile/:userId/following', controller.getFollowing());
+  router.get('/profile/:userId/followers', controller.getFollowers(cfg));
+  router.get('/profile/:userId/following', controller.getFollowing(cfg));
 
   return router;
 }
