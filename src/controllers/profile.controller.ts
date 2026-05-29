@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS, success, errorResponse, ERROR_CODES } from '@tasqalent/shared';
+import type { Config } from '../config/config';
 import * as profileService from '../services/profile.service';
 
 export function getProfile() {
@@ -22,6 +23,18 @@ export function updateProfile() {
     try {
       const userId = req.user?.id;
       const profile = await profileService.updateProfile(userId, req.body);
+      success(res, profile);
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+export function uploadAvatar(cfg: Config) {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = req.user?.id;
+      const profile = await profileService.updateAvatar(cfg, userId, req.body.filePath);
       success(res, profile);
     } catch (err) {
       next(err);

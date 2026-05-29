@@ -21,3 +21,15 @@ export async function upsertProfile(
 export async function getProfile(userId: string): Promise<IUserProfile | null> {
   return UserProfile.findOne({ userId }).lean();
 }
+
+export async function updateAvatar(
+  userId: string,
+  avatarUrl: string,
+  avatarPublicId: string
+): Promise<IUserProfile | null> {
+  return UserProfile.findOneAndUpdate(
+    { userId },
+    { $set: { avatarUrl, avatarPublicId } },
+    { new: true }
+  ).lean();
+}
