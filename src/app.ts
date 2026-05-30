@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import type { Config } from './config/config';
 import { createLogger, requestIdMiddleware, errorMiddleware } from '@tasqalent/shared';
 import { connectMongo } from './db/connection';
-import { profileRoutes } from './routes/profile.routes';
+import { routes } from './routes';
 
 export async function createApp(cfg: Config) {
   createLogger({ serviceName: cfg.serviceName, level: cfg.logLevel });
@@ -29,7 +29,7 @@ export async function createApp(cfg: Config) {
 
   app.use(requestIdMiddleware);
 
-  app.use(profileRoutes(cfg));
+  app.use(routes(cfg));
 
   app.get('/healthz', (_req, res) => {
     res.json({ status: 'ok' });
