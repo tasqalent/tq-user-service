@@ -35,7 +35,7 @@ export function uploadAvatar(cfg: Config) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.sub as string;
-      const profile = await profileService.updateAvatar(cfg, userId, req.body.filePath);
+      const profile = await profileService.updateAvatar(cfg, userId, req.body.buffer);
       success(res, profile);
     } catch (err) {
       next(err);
