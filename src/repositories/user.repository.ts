@@ -91,7 +91,7 @@ export async function getFollowing(
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select('followerId -_id')
+      .select('followingId -_id')
       .lean(),
     Follow.countDocuments({ followerId: userId }),
   ]);
