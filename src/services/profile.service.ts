@@ -33,7 +33,7 @@ export async function updateProfile(cfg: Config, userId: string, data: userRepo.
   return profile;
 }
 
-export async function updateAvatar(cfg: Config, userId: string, filePath: string) {
+export async function updateAvatar(cfg: Config, userId: string, buffer: Buffer) {
   cloudinaryV2.config({
     cloud_name: cfg.cloudinary.cloudName,
     api_key: cfg.cloudinary.apiKey,
@@ -41,7 +41,9 @@ export async function updateAvatar(cfg: Config, userId: string, filePath: string
   });
 
   const publicId = buildProfileImagePublicId(userId);
-  const result = await cloudinaryV2.uploader.upload(filePath, {
+  const dataUri = `data:image/jpeg;base64,${buffer.toString('base64')}`;
+
+  const result = await cloudinaryV2.uploader.upload(dataUri, {
     public_id: publicId,
     overwrite: true,
     resource_type: 'image',
