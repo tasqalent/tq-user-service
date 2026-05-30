@@ -14,7 +14,7 @@ export interface IUserProfile extends Document {
   phone: string;
   followerCount: number;
   followingCount: number;
-  inOnline: boolean;
+  isOnline: boolean;
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -34,7 +34,7 @@ const UserProfileSchema = new Schema<IUserProfile>({
   phone: { type: String, default: '' },
   followerCount: { type: Number, default: 0 },
   followingCount: { type: Number, default: 0 },
-  inOnline: { type: Boolean, default: false },
+  isOnline: { type: Boolean, default: false },
   lastSeen: { type: Date, default: Date.now },
 });
 
